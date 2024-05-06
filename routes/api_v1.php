@@ -5,8 +5,7 @@ use App\Models\Ticket;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::post('/login', [AuthController::class, 'login']);
-Route::post('/register', [AuthController::class, 'register']);
+Route::resource('tickets', \App\Http\Controllers\Api\v1\TicketController::class);
 
 Route::get('/user', function (Request $request) {
     return $request->user();
