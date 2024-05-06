@@ -9,8 +9,8 @@ use Illuminate\Http\Request;
 class AuthController extends Controller {
 	use ApiResponses;
 
-	public function login(ApiLoginRequest $request) {
-		return $this->ok($request->get('email'));
+	public function login() {
+		return $this->ok('hello from login');
 	}
 
 	public function register() {
