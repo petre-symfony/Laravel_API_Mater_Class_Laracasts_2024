@@ -6,13 +6,16 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
 class TicketResource extends JsonResource {
-	public static $wrap = 'ticket';
+	//public static $wrap = 'ticket';
 	/**
 	 * Transform the resource into an array.
 	 *
 	 * @return array<string, mixed>
 	 */
 	public function toArray(Request $request): array {
-		return parent::toArray($request);
+		return [
+			'type' => 'ticket',
+			'id' => $this->id
+		];
 	}
 }
