@@ -22,6 +22,9 @@ class TicketResource extends JsonResource {
 				'status' => $this->status,
 				'createdAt' => $this->created_at,
 				'updatedAt' => $this->updated_at
+			],
+			'links' => [
+				'self' => route('tickets.show', ['ticket' => $this->id])
 			]
 		];
 	}
