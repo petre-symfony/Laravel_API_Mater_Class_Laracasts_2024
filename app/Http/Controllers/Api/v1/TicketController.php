@@ -13,7 +13,7 @@ class TicketController extends Controller {
 	 * Display a listing of the resource.
 	 */
 	public function index() {
-		return TicketResource::collection(Ticket::all());
+		return TicketResource::collection(Ticket::paginate());
 	}
 
 	/**
