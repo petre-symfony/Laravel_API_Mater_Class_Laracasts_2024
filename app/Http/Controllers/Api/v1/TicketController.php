@@ -27,7 +27,7 @@ class TicketController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(Ticket $ticket) {
-		//
+		return new TicketResource($ticket);
 	}
 
 	/**
