@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\v1\StoreUserRequest;
 use App\Http\Requests\Api\v1\UpdateUserRequest;
+use App\Http\Resources\v1\UserResource;
 use App\Models\User;
 
 class UserController extends Controller {
@@ -12,15 +13,9 @@ class UserController extends Controller {
 	 * Display a listing of the resource.
 	 */
 	public function index() {
-		//
+		return UserResource::collection(User::paginate());
 	}
 
-	/**
-	 * Show the form for creating a new resource.
-	 */
-	public function create() {
-		//
-	}
 
 	/**
 	 * Store a newly created resource in storage.
@@ -33,14 +28,7 @@ class UserController extends Controller {
 	 * Display the specified resource.
 	 */
 	public function show(User $user) {
-		//
-	}
-
-	/**
-	 * Show the form for editing the specified resource.
-	 */
-	public function edit(User $user) {
-		//
+		return new UserResource($user);
 	}
 
 	/**
