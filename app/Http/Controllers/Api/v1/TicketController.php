@@ -13,6 +13,10 @@ class TicketController extends Controller {
 	 * Display a listing of the resource.
 	 */
 	public function index() {
+		if ($this->include('author')) {
+			return TicketResource::collection(Ticket::with('user')->paginate());
+		}
+
 		return TicketResource::collection(Ticket::paginate());
 	}
 
