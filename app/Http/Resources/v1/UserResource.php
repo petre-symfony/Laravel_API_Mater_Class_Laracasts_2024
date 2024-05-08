@@ -18,10 +18,11 @@ class UserResource extends JsonResource {
 			'attributes' => [
 				'name' => $this->name,
 				'email' => $this->email,
-				'emailVerifiedAt' => $this->when(
-					$request->routeIs('users.*'),
-					$this->emailVerifiedAt
-				)
+				'emailVerifiedAt' => $this->mergeWhen( $request->routeIs('users.*'), [
+					'emailVerifiedAt' => $this->emailVerifiedAt,
+					'createdAt' => $this->created_at,
+					'updatedAt' => $this->updated_at
+				])
 			]
 		];
 	}
