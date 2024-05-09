@@ -13,6 +13,15 @@ class TicketController extends ApiController {
 	 * Display a listing of the resource.
 	 */
 	public function index(TicketFilter $filters) {
+		[
+			'include' => 'author',
+			'filter' => [
+				'status' => 'C',
+				'title' => 'title filter',
+				'createdAt' => ''
+			]
+		];
+
 		return TicketResource::collection(Ticket::filter($filters)->paginate());
 	}
 
