@@ -30,12 +30,12 @@ class AuthorsController extends ApiController {
 	/**
 	 * Display the specified resource.
 	 */
-	public function show(User $user) {
+	public function show(User $author) {
 		if ($this->include('tickets')){
-			return new UserResource($user->load('tickets'));
+			return new UserResource($author->load('tickets'));
 		}
 
-		return new UserResource($user);
+		return new UserResource($author);
 	}
 
 	/**
