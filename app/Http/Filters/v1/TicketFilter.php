@@ -2,7 +2,7 @@
 
 namespace App\Http\Filters\v1;
 
-class TicketFilter {
+class TicketFilter extends QueryFilter {
 	public function status($value) {
 		return $this->builder->where('status', $value);
 	}
