@@ -50,7 +50,7 @@ abstract class QueryFilter {
 			if (!in_array($sortAttribute, $this->sortable)) {
 				continue;
 			}
-			
+
 			$this->builder->orderBy($sortAttribute, $direction);
 		}
 	}

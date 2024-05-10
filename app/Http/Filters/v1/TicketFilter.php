@@ -5,7 +5,8 @@ namespace App\Http\Filters\v1;
 class TicketFilter extends QueryFilter {
 	protected $sortable = [
 		'title',
-		'status'
+		'status',
+		'createdAt'
 	];
 
 	public function createdAt($value) {
