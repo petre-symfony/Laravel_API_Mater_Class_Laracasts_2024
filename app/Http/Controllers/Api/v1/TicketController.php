@@ -7,20 +7,14 @@ use App\Http\Requests\Api\v1\StoreTicketRequest;
 use App\Http\Requests\Api\v1\UpdateTicketRequest;
 use App\Http\Resources\v1\TicketResource;
 use App\Models\Ticket;
+use App\Models\User;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class TicketController extends ApiController {
 	/**
 	 * Display a listing of the resource.
 	 */
 	public function index(TicketFilter $filters) {
-		[
-			'include' => 'author',
-			'filter' => [
-				'status' => 'C',
-				'title' => 'title filter',
-				'createdAt' => ''
-			]
-		];
 
 		return TicketResource::collection(Ticket::filter($filters)->paginate());
 	}
@@ -29,7 +23,22 @@ class TicketController extends ApiController {
 	 * Store a newly created resource in storage.
 	 */
 	public function store(StoreTicketRequest $request) {
-		//
+		try {
+			$user = User::findOrFail($request->input('data.relationships.author.data.id'));
+		} catch (ModelNotFoundException $exception) {
+			return $this->ok('User Not Found', [
+				'error' => 'The provided user id does not exists'
+			]);
+		}
+
+		$model = [
+			'title' => $request->input('data.attributes.title'),
+			'description' => $request->input('data.attributes.description'),
+			'status' => $request->input('data.attributes.status'),
+			'user_id' => $request->input('data.relationships.author.data.id')
+		];
+
+		return Ticket::create($model);
 	}
 
 	/**
