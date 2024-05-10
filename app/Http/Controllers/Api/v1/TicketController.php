@@ -47,7 +47,7 @@ class TicketController extends ApiController {
 	public function show($ticket_id) {
 		try {
 			$ticket = Ticket::findOrFail($ticket_id);
-			
+
 			if ($this->include('author')) {
 				return new TicketResource($ticket->load('user'));
 			}
