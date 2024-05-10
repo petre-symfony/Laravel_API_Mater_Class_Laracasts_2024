@@ -10,7 +10,7 @@ class StoreTicketRequest extends FormRequest {
 	 * Determine if the user is authorized to make this request.
 	 */
 	public function authorize(): bool {
-		return false;
+		return true;
 	}
 
 	/**
@@ -20,7 +20,8 @@ class StoreTicketRequest extends FormRequest {
 	 */
 	public function rules(): array {
 		return [
-			//
+			'data' => 'required|array',
+			'data.attributes' => 'required|array'
 		];
 	}
 }
