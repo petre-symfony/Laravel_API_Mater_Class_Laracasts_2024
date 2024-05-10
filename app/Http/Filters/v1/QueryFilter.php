@@ -8,6 +8,7 @@ use Illuminate\Http\Request;
 abstract class QueryFilter {
 	protected $builder;
 	protected $request;
+	protected $sortable = [];
 
 	public function __construct(Request $request) {
 		$this->request = $request;
@@ -46,6 +47,10 @@ abstract class QueryFilter {
 				$sortAttribute = substr($sortAttribute, 1);
 			}
 
+			if (!in_array($sortAttribute, $this->sortable)) {
+				continue;
+			}
+			
 			$this->builder->orderBy($sortAttribute, $direction);
 		}
 	}

@@ -3,6 +3,11 @@
 namespace App\Http\Filters\v1;
 
 class TicketFilter extends QueryFilter {
+	protected $sortable = [
+		'title',
+		'status'
+	];
+
 	public function createdAt($value) {
 		$dates = explode(',', $value);
 
