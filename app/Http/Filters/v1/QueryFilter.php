@@ -13,16 +13,6 @@ abstract class QueryFilter {
 		$this->request = $request;
 	}
 
-	protected function filter($arr) {
-		foreach($arr as $key => $value) {
-			if (method_exists($this, $key)) {
-				$this->$key($value);
-			}
-		}
-
-		return $this->builder;
-	}
-
 	public function apply(Builder $builder) {
 		$this->builder = $builder;
 
@@ -33,5 +23,30 @@ abstract class QueryFilter {
 		}
 
 		return $builder;
+	}
+
+	protected function filter($arr) {
+		foreach($arr as $key => $value) {
+			if (method_exists($this, $key)) {
+				$this->$key($value);
+			}
+		}
+
+		return $this->builder;
+	}
+
+	public function sort($value) {
+		$sortAttributes = explode(',', $value);
+
+		foreach ($sortAttributes as $sortAttribute) {
+			$direction = 'asc';
+
+			if (strpos($sortAttribute, '-') === 0){
+				$direction = 'desc';
+				$sortAttribute = substr($sortAttribute, 1);
+			}
+
+			$this->builder->orderBy($sortAttribute, $direction);
+		}
 	}
 }
