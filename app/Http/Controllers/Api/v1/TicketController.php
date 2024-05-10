@@ -38,7 +38,7 @@ class TicketController extends ApiController {
 			'user_id' => $request->input('data.relationships.author.data.id')
 		];
 
-		return Ticket::create($model);
+		return new TicketResource(Ticket::create($model));
 	}
 
 	/**
