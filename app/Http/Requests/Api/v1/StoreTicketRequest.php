@@ -19,12 +19,17 @@ class StoreTicketRequest extends FormRequest {
 	 * @return array<string, ValidationRule|array<mixed>|string>
 	 */
 	public function rules(): array {
-		return [
+		$rules = [
 			'data.attributes.title' => 'required|string',
 			'data.attributes.description' => 'required|string',
-			'data.attributes.status' => 'required|string|in:A,C,H,X',
-			'data.relationships.author.data.id' => 'required|integer'
+			'data.attributes.status' => 'required|string|in:A,C,H,X'
 		];
+
+		if ($this->routeIs('tickets.store')) {
+			$rules['data.relationships.author.data.id'] = 'required|integer';
+		}
+
+		return $rules;
 	}
 
 	public function messages() {
