@@ -47,11 +47,17 @@ abstract class QueryFilter {
 				$sortAttribute = substr($sortAttribute, 1);
 			}
 
-			if (!in_array($sortAttribute, $this->sortable)) {
+			if (!in_array($sortAttribute, $this->sortable) && !array_key_exists($sortAttribute, $this->sortable)) {
 				continue;
 			}
 
-			$this->builder->orderBy($sortAttribute, $direction);
+			$columnName = $this->sortable[$sortAttribute] ?? null;
+
+			if ($columnName === null) {
+				$columnName = $sortAttribute;
+			}
+
+			$this->builder->orderBy($columnName, $direction);
 		}
 	}
 }

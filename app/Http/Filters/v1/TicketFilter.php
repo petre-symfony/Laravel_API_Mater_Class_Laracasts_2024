@@ -6,7 +6,8 @@ class TicketFilter extends QueryFilter {
 	protected $sortable = [
 		'title',
 		'status',
-		'createdAt'
+		'createdAt' => 'created_at',
+		'updatedAt' => 'updated_at'
 	];
 
 	public function createdAt($value) {
