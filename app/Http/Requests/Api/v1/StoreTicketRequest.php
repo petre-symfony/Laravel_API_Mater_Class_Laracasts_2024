@@ -26,4 +26,10 @@ class StoreTicketRequest extends FormRequest {
 			'data.relationships.author.data.id' => 'required|integer'
 		];
 	}
+
+	public function messages() {
+		return [
+			'data.attributes.status' => 'The data.attributes.status value is invalid. Please use A, C, H, or X'
+		];
+	}
 }
