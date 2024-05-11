@@ -82,6 +82,6 @@ class TicketController extends ApiController {
 	}
 
 	public function replace(ReplaceTicketRequest $request, $ticket_id) {
-
+		return 'replace';
 	}
 }
