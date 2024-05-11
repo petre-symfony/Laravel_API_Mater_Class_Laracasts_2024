@@ -59,28 +59,6 @@ class TicketController extends ApiController {
 		}
 	}
 
-	/**
-	 * Update the specified resource in storage.
-	 */
-	public function update(UpdateTicketRequest $request, Ticket $ticket) {
-		//
-	}
-
-	/**
-	 * Remove the specified resource from storage.
-	 */
-	public function destroy($ticket_id) {
-		try {
-			$ticket = Ticket::findOrFail($ticket_id);
-			$ticket->delete();
-
-			return $this->ok('Ticket successfully deleted');
-		} catch (ModelNotFoundException $exception) {
-			return  $this->error('Ticket Not Found', 404);
-		}
-
-	}
-
 	public function replace(ReplaceTicketRequest $request, $ticket_id) {
 		try {
 			$ticket = Ticket::findOrFail($ticket_id);
@@ -99,4 +77,42 @@ class TicketController extends ApiController {
 			return  $this->error('Ticket Not Found', 404);
 		}
 	}
+
+	/**
+	 * Update the specified resource in storage.
+	 */
+	public function update(UpdateTicketRequest $request, $ticket_id) {
+		try {
+			$ticket = Ticket::findOrFail($ticket_id);
+
+			$model = [
+				'title' => $request->input('data.attributes.title'),
+				'description' => $request->input('data.attributes.description'),
+				'status' => $request->input('data.attributes.status'),
+				'user_id' => $request->input('data.relationships.author.data.id')
+			];
+
+			$ticket->update($model);
+
+			return new TicketResource($ticket);
+		} catch (ModelNotFoundException $exception) {
+			return  $this->error('Ticket Not Found', 404);
+		}
+	}
+
+	/**
+	 * Remove the specified resource from storage.
+	 */
+	public function destroy($ticket_id) {
+		try {
+			$ticket = Ticket::findOrFail($ticket_id);
+			$ticket->delete();
+
+			return $this->ok('Ticket successfully deleted');
+		} catch (ModelNotFoundException $exception) {
+			return  $this->error('Ticket Not Found', 404);
+		}
+
+	}
+
 }
