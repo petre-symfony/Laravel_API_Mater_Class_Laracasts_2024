@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\v1;
 use App\Http\Filters\v1\TicketFilter;
 use App\Http\Requests\Api\v1\ReplaceTicketRequest;
 use App\Http\Requests\Api\v1\StoreTicketRequest;
+use App\Http\Requests\Api\v1\UpdateTicketRequest;
 use App\Http\Resources\v1\TicketResource;
 use App\Models\Ticket;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -18,14 +19,7 @@ class AuthorTicketsController extends ApiController {
 
 	public function store($author_id, StoreTicketRequest $request) {
 
-		$model = [
-			'title' => $request->input('data.attributes.title'),
-			'description' => $request->input('data.attributes.description'),
-			'status' => $request->input('data.attributes.status'),
-			'user_id' => $author_id
-		];
-
-		return new TicketResource(Ticket::create($model));
+		return new TicketResource(Ticket::create(array_merge(['user_id' => $author_id],$request->mappedAttributes())));
 	}
 
 	public function replace(ReplaceTicketRequest $request, $author_id, $ticket_id) {
@@ -33,14 +27,25 @@ class AuthorTicketsController extends ApiController {
 			$ticket = Ticket::findOrFail($ticket_id);
 
 			if ($ticket->user_id == $author_id) {
-				$model = [
-					'title' => $request->input('data.attributes.title'),
-					'description' => $request->input('data.attributes.description'),
-					'status' => $request->input('data.attributes.status'),
-					'user_id' => $author_id
-				];
 
-				$ticket->update($model);
+				$ticket->update($request->mappedAttributes());
+
+				return new TicketResource($ticket);
+			}
+
+			//ToDo ticket doesn't belong to user
+		} catch (ModelNotFoundException $exception) {
+			return  $this->error('Ticket Not Found', 404);
+		}
+	}
+
+	public function update(UpdateTicketRequest $request, $author_id, $ticket_id) {
+		try {
+			$ticket = Ticket::findOrFail($ticket_id);
+
+			if ($ticket->user_id == $author_id) {
+
+				$ticket->update($request->mappedAttributes());
 
 				return new TicketResource($ticket);
 			}
