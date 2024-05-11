@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\v1;
 
 use App\Http\Filters\v1\TicketFilter;
+use App\Http\Requests\Api\v1\ReplaceTicketRequest;
 use App\Http\Requests\Api\v1\StoreTicketRequest;
 use App\Http\Requests\Api\v1\UpdateTicketRequest;
 use App\Http\Resources\v1\TicketResource;
@@ -77,6 +78,10 @@ class TicketController extends ApiController {
 		} catch (ModelNotFoundException $exception) {
 			return  $this->error('Ticket Not Found', 404);
 		}
+
+	}
+
+	public function replace(ReplaceTicketRequest $request, $ticket_id) {
 
 	}
 }
