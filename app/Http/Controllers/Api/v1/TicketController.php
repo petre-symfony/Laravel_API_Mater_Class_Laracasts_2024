@@ -71,6 +71,9 @@ class TicketController extends ApiController {
 		try {
 			$ticket = Ticket::findOrFail($ticket_id);
 
+			$ticket->user()->tokenCan('ticket:update');
+			$request->user()->id === $ticket->user_id;
+			
 			$ticket->update($request->mappedAttributes());
 
 			return new TicketResource($ticket);
