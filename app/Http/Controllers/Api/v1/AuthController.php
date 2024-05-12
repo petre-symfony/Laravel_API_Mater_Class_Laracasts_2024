@@ -26,7 +26,7 @@ class AuthController extends Controller {
 				'token' =>
 					$user->createToken(
 						'API token for ' . $user->email,
-						['ticket:create', 'ticket:update'],
+						['ticket:create', 'ticket:own:update'],
 						now()->addMonth()
 					)->plainTextToken
 			]
