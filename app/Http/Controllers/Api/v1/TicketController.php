@@ -28,6 +28,10 @@ class TicketController extends ApiController {
 	public function store(StoreTicketRequest $request) {
 		try {
 			$user = User::findOrFail($request->input('data.relationships.author.data.id'));
+
+			Gate::authorize('store', null);
+
+			//To do create ticket
 		} catch (ModelNotFoundException $exception) {
 			return $this->ok('User Not Found', [
 				'error' => 'The provided user id does not exists'
@@ -58,12 +62,14 @@ class TicketController extends ApiController {
 		try {
 			$ticket = Ticket::findOrFail($ticket_id);
 
+			Gate::authorize('replace', $ticket);
+
 			$ticket->update($request->mappedAttributes());
 
 			return new TicketResource($ticket);
 		} catch (ModelNotFoundException $exception) {
 			return  $this->error('Ticket Not Found', 404);
-		}
+		} 
 	}
 
 	/**
@@ -92,6 +98,9 @@ class TicketController extends ApiController {
 	public function destroy($ticket_id) {
 		try {
 			$ticket = Ticket::findOrFail($ticket_id);
+
+			Gate::authorize('delete', $ticket);
+
 			$ticket->delete();
 
 			return $this->ok('Ticket successfully deleted');
