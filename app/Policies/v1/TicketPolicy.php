@@ -14,7 +14,7 @@ class TicketPolicy {
 	}
 
 	public function update(User $user, Ticket $ticket) {
-		if ($user->is_manager || $user->is_admin) {
+		if ($user->isInRole('ticket:update')) {
 			return true;
 		}
 		return $user->id === $ticket->user_id;
