@@ -55,33 +55,39 @@ class AuthorTicketsController extends ApiController {
 
 	public function update(UpdateTicketRequest $request, $author_id, $ticket_id) {
 		try {
-			$ticket = Ticket::findOrFail($ticket_id);
+			$ticket = Ticket::where('id', $ticket_id)
+				->where('user_id', $author_id)
+				->firstOrFail();
 
-			if ($ticket->user_id == $author_id) {
+			Gate::authorize('update', $ticket);
 
-				$ticket->update($request->mappedAttributes());
+			$ticket->update($request->mappedAttributes());
 
-				return new TicketResource($ticket);
-			}
+			return new TicketResource($ticket);
 
 			//ToDo ticket doesn't belong to user
 		} catch (ModelNotFoundException $exception) {
 			return  $this->error('Ticket Not Found', 404);
+		} catch (AuthorizationException $exception) {
+			return $this->error('You are not authorized to update that resource', 401);
 		}
 	}
 
 	public function destroy($author_id, $ticket_id) {
 		try {
-			$ticket = Ticket::findOrFail($ticket_id);
+			$ticket = Ticket::where('id', $ticket_id)
+				->where('user_id', $author_id)
+				->firstOrFail();
 
-			if ($ticket->user_id == $author_id) {
-				$ticket->delete();
-				return $this->ok('Ticket successfully deleted');
-			}
+			Gate::authorize('delete', $ticket);
 
-			return  $this->error('Ticket Not Found', 404);
+			$ticket->delete();
+			return $this->ok('Ticket successfully deleted');
+
 		} catch (ModelNotFoundException $exception) {
 			return  $this->error('Ticket Not Found', 404);
+		} catch (AuthorizationException $exception) {
+			return $this->error('You are not authorized to update that resource', 401);
 		}
 
 	}
