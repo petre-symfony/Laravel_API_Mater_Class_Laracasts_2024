@@ -8,7 +8,9 @@ use App\Http\Requests\Api\v1\StoreTicketRequest;
 use App\Http\Requests\Api\v1\UpdateTicketRequest;
 use App\Http\Resources\v1\TicketResource;
 use App\Models\Ticket;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Gate;
 
 class AuthorTicketsController extends ApiController {
 	public function index($author_id, TicketFilter $filter) {
@@ -17,9 +19,16 @@ class AuthorTicketsController extends ApiController {
 		);
 	}
 
-	public function store($author_id, StoreTicketRequest $request) {
+	public function store(StoreTicketRequest $request, $author_id) {
 
-		return new TicketResource(Ticket::create(array_merge(['user_id' => $author_id],$request->mappedAttributes())));
+		try {
+
+			Gate::authorize('store', Ticket::class);
+
+			return new TicketResource(Ticket::create($request->mappedAttributes()));
+		} catch (AuthorizationException $exception) {
+			return $this->error('You are not authorized to update that resource', 401);
+		}
 	}
 
 	public function replace(ReplaceTicketRequest $request, $author_id, $ticket_id) {
