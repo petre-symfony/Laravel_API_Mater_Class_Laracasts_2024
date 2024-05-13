@@ -19,17 +19,19 @@ class StoreTicketRequest extends BaseTicketRequest {
 	 * @return array<string, ValidationRule|array<mixed>|string>
 	 */
 	public function rules(): array {
+		$authorizeIdAttr = $this->routeIs('tickets.store') ? 'data.relationships.author.data.id' : 'author';
+
 		$rules = [
 			'data.attributes.title' => 'required|string',
 			'data.attributes.description' => 'required|string',
 			'data.attributes.status' => 'required|string|in:A,C,H,X',
-			'data.relationships.author.data.id' => 'required|integer|exists:users,id'
+			$authorizeIdAttr => 'required|integer|exists:users,id'
 		];
 
 		$user = $this->user();
 
 		if ($user->tokenCan(Abilities::CreateOwnTicket)) {
-			$rules['data.relationships.author.data.id'] .= '|size:' . $user->id;
+			$rules[$authorizeIdAttr] .= '|size:' . $user->id;
 		}
 
 		return $rules;
@@ -38,7 +40,7 @@ class StoreTicketRequest extends BaseTicketRequest {
 	protected function prepareForValidation() {
 		if ($this->routeIs('authors.tickets.store')) {
 			$this->merge([
-				'data.relationships.author.data.id' => $this->route('author')
+				'author' => $this->route('author')
 			]);
 		}
 	}

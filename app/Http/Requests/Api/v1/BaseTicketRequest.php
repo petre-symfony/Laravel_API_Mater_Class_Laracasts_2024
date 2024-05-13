@@ -2,7 +2,6 @@
 
 namespace App\Http\Requests\Api\v1;
 
-use Illuminate\Contracts\Validation\ValidationRule;
 use Illuminate\Foundation\Http\FormRequest;
 
 class BaseTicketRequest extends FormRequest {
