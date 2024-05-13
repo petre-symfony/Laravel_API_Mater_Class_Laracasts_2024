@@ -27,7 +27,6 @@ class TicketController extends ApiController {
 	 */
 	public function store(StoreTicketRequest $request) {
 		try {
-			$user = User::findOrFail($request->input('data.relationships.author.data.id'));
 
 			Gate::authorize('store', null);
 
