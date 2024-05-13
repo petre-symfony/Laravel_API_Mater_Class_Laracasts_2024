@@ -28,16 +28,13 @@ class TicketController extends ApiController {
 	public function store(StoreTicketRequest $request) {
 		try {
 
-			Gate::authorize('store', null);
+			Gate::authorize('store', Ticket::class);
 
 			//To do create ticket
-		} catch (ModelNotFoundException $exception) {
-			return $this->ok('User Not Found', [
-				'error' => 'The provided user id does not exists'
-			]);
+			return new TicketResource(Ticket::create($request->mappedAttributes()));
+		} catch (AuthorizationException $exception) {
+			return $this->error('You are not authorized to update that resource', 401);
 		}
-
-		return new TicketResource($request->mappedAttributes());
 	}
 
 	/**
