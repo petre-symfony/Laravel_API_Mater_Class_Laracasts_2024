@@ -13,6 +13,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Gate;
 
 class AuthorTicketsController extends ApiController {
+
 	public function index($author_id, TicketFilter $filter) {
 		return TicketResource::collection(
 			Ticket::where('user_id', $author_id)->filter($filter)->paginate()
@@ -29,24 +30,26 @@ class AuthorTicketsController extends ApiController {
 				'author' => 'user_id'
 			])));
 		} catch (AuthorizationException $exception) {
-			return $this->error('You are not authorized to update that resource', 401);
+			return $this->error('You are not authorized to create that resource', 401);
 		}
 	}
 
 	public function replace(ReplaceTicketRequest $request, $author_id, $ticket_id) {
 		try {
-			$ticket = Ticket::findOrFail($ticket_id);
+			$ticket = Ticket::where('id', $ticket_id)
+				->where('user_id', $author_id)
+				->firstOrFail();
 
-			if ($ticket->user_id == $author_id) {
+			Gate::authorize('replace', $ticket);
 
-				$ticket->update($request->mappedAttributes());
+			$ticket->update($request->mappedAttributes());
 
-				return new TicketResource($ticket);
-			}
+			return new TicketResource($ticket);
 
-			//ToDo ticket doesn't belong to user
 		} catch (ModelNotFoundException $exception) {
 			return  $this->error('Ticket Not Found', 404);
+		} catch (AuthorizationException $exception) {
+			return $this->error('You are not authorized to update that resource', 401);
 		}
 	}
 
