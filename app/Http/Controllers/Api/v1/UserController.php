@@ -13,11 +13,8 @@ class UserController extends ApiController {
 	 * Display a listing of the resource.
 	 */
 	public function index(AuthorFilter $filters) {
-		return UserResource::collection(User::select('users.*')
-			->join('tickets', 'users.id', '=', 'tickets.user_id')
-			->filter($filters)
-			->distinct()
-			->paginate()
+		return UserResource::collection(
+			User::filter($filters)->paginate()
 		);
 	}
 
