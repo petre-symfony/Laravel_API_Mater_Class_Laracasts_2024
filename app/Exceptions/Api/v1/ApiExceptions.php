@@ -51,7 +51,7 @@ class ApiExceptions {
 
 		return response()->json([
 			'errors' => [
-				'type' => basename(get_class($e), strrpos(get_class($e), '\\') + 1),
+				'type' => substr(get_class($e), strrpos(get_class($e), '\\') + 1),
 				'status' => 401,
 				'message' => $e->getMessage()
 			]
