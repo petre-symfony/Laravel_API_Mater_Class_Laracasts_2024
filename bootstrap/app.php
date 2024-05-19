@@ -22,18 +22,25 @@ return Application::configure(basePath: dirname(__DIR__))
         //
     })
     ->withExceptions(function (Exceptions $exceptions) {
-    	$exceptions->render(function (Throwable $e, Request $request) {
+    	$exceptions->render(function (Throwable $e, Request $request) use ($exceptions){
 				$classname = basename(get_class($e));
-				
+
 				$index = strrpos($classname, '\\');
 
+				if ($classname === \Illuminate\Validation\ValidationException::class) {
+					foreach ($e->errors() as $key => $value) {
+						foreach ($value as $message) {
+							$errors[] = [
+								'status' => '422',
+								'message' => $message,
+								'source' => $key
+							];
+						}
+					}
+				}
+
 				return response()->json([
-					'error' => [
-						'type' => substr($classname, $index + 1),
-						'status' => 0,
-						'message' => $e->getMessage(),
-						'source' => 'Line! ' . $e->getLine() . ': ' . $e->getFile()
-					]
+					'errors' => $errors
 				]);
 			});
     })->create();
