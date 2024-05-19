@@ -1,10 +1,13 @@
 <?php
 
+use App\Exceptions\Api\v1\ApiExceptions;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Illuminate\Validation\ValidationException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -23,24 +26,22 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
     	$exceptions->render(function (Throwable $e, Request $request) use ($exceptions){
-				$classname = basename(get_class($e));
+				$className = basename(get_class($e));
+				$handlers = ApiExceptions::$handlers;
 
-				$index = strrpos($classname, '\\');
+				$index = strrpos($className, '\\');
 
-				if ($classname === \Illuminate\Validation\ValidationException::class) {
-					foreach ($e->errors() as $key => $value) {
-						foreach ($value as $message) {
-							$errors[] = [
-								'status' => '422',
-								'message' => $message,
-								'source' => $key
-							];
-						}
-					}
+				if (array_key_exists($className, $handlers)) {
+					$method = $handlers[$className];
+					return ApiExceptions::$method($e, $request);
 				}
 
 				return response()->json([
-					'errors' => $errors
+					'errors' => [
+						'type' => substr(get_class($e), $index + 1),
+						'status' => intval($e->getCode()), // returns 0 if no code
+						'message' =>  $e->getMessage()
+					]
 				]);
 			});
     })->create();
